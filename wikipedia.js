@@ -3,7 +3,7 @@ function Wikipedia (lang) {
 }
 
 Wikipedia.prototype.search = function(query) {
-  var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription&titles=" + encodeURIComponent(query) + "&key=" + this.apiKey + "&secret=" + this.apiSecret + "&type=" + this.type);
+  var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription&titles=" + encodeURIComponent(query));
   var json = JSON.parse(result.query.pages);
   return json.results;  
 }
