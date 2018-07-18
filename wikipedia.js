@@ -5,8 +5,8 @@ function Wikipedia (lang) {
 Wikipedia.prototype.search = function(query) {
   var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription&titles=" + encodeURIComponent(query));
   console.log(result);
-  var json = JSON.parse(result.query.pages);
-  return json.results;  
+  var json = JSON.parse(result);
+  return json;  
 }
 
 /**
