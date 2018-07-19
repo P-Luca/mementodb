@@ -7,8 +7,8 @@ Wikipedia.prototype.search = function(query) {
   var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimageinfo&generator=search&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
   var json = JSON.parse(result.body);
   var pages = json.query.pages;
-  if(pages !== null) {
-  var resultArray = [];
+  if(pages !== undefined) {
+      var resultArray = [];
       for (var id in pages) {
         if(pages[id].coordinates !== undefined) {
             var page = {};
