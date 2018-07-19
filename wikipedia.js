@@ -3,9 +3,15 @@ function Wikipedia (lang) {
 }
 
 Wikipedia.prototype.search = function(query) {
-  var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription&titles=" + encodeURIComponent(query));
+  var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cimageinfo&callback=?&titles=" + encodeURIComponent(query));
   var json = JSON.parse(result);
-  return json;  
+  var pages = json.query.pages;
+  var resultArray = [];
+  for (var id in pages) {
+    var page = pages[id];
+    resultArray.push(page);
+  }
+  return resultArray;
 }
 
 /**
