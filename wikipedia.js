@@ -5,9 +5,9 @@ function Wikipedia (lang) {
 Wikipedia.prototype.search = function(query) {
   var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimageinfo&generator=search&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
   var json = JSON.parse(result.body);
+  var resultArray = [];
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined)
       var pages = json.query.pages;
-      var resultArray = [];
       for (var id in pages) {
         if(pages[id].coordinates !== undefined) {
             var page = {};
