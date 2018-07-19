@@ -8,7 +8,15 @@ Wikipedia.prototype.search = function(query) {
   var pages = json.query.pages;
   var resultArray = [];
   for (var id in pages) {
-    var page = pages[id];
+    var page = {};
+    page.pageid = pages[id].pageid;
+    page.title = pages[id].title;
+    page.description = pages[id].description;
+    page.lat = pages[id].coordinates[0].lat;
+    page.lon = pages[id].coordinates[0].lon;
+    page.location = new JSGeolocation();
+    page.location.lat = page.lat;
+    page.location.lng = page.lon;
     resultArray.push(page);
   }
   return resultArray;
