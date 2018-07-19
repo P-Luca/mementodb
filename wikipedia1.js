@@ -3,20 +3,23 @@ function Wikipedia (lang) {
 }
 
 Wikipedia.prototype.search = function(query) {
-  var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cimageinfo&titles=" + encodeURIComponent(query));
+  //var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cimageinfo&titles=" + encodeURIComponent(query));
+  var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimageinfo&generator=search&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
   var json = JSON.parse(result.body);
   var pages = json.query.pages;
   if(pages !== null) {
   var resultArray = [];
       for (var id in pages) {
-        var page = {};
-        page.pageid = pages[id].pageid;
-        page.title = pages[id].title;
-        page.description = pages[id].description;
-        page.lat = pages[id].coordinates[0].lat;
-        page.lon = pages[id].coordinates[0].lon;
-        page.location = page.lat + "," + page.lon;
-        resultArray.push(page);
+        if(pages[id].coordinates !== null) {
+            var page = {};
+            page.pageid = pages[id].pageid;
+            page.title = pages[id].title;
+            page.description = pages[id].description;
+            page.lat = pages[id].coordinates[0].lat;
+            page.lon = pages[id].coordinates[0].lon;
+            page.location = page.lat + "," + page.lon;
+            resultArray.push(page);
+        }
       }
   }
   return resultArray;
