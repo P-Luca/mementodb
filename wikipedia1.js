@@ -10,7 +10,7 @@ Wikipedia.prototype.search = function(query) {
   if(pages !== null) {
   var resultArray = [];
       for (var id in pages) {
-        if(pages[id].coordinates !== null) {
+        if(pages[id].coordinates !== undefined) {
             var page = {};
             page.pageid = pages[id].pageid;
             page.title = pages[id].title;
