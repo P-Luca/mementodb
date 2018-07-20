@@ -53,7 +53,7 @@ Wikipedia.prototype.details = function(pageId) {
 }
 
 function getImages(titles) {
-    var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&iiurlwidth=1280&iiurlheight=1280&titles='+encodeURIComponent(imgTitles));
+    var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&iiurlwidth=1280&iiurlheight=1280&titles="+encodeURIComponent(imgTitles));
     var json = JSON.parse(result.body);
     if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
         var images = "";
