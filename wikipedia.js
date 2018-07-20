@@ -44,8 +44,8 @@ Wikipedia.prototype.details = function(pageId) {
 		if(regex.test(title))
 			imgTitles.push(title);
             }
-	    var images = this.getImages(imgTitles.join('|'));
-            details['images'] = images.join();
+	    /*var images = this.getImages(imgTitles.join('|'));
+            details['images'] = images.join();*/
         }
         resultArray.push(details);
     }
