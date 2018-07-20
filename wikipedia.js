@@ -33,7 +33,7 @@ Wikipedia.prototype.details = function(pageId) {
         var details = {};
         details.title = page.title
         details.location = page.coordinates[0].lat + "," + page.coordinates[0].lon;
-        details.description = page.extract;
+        details.extract = page.extract;
         details.url = page.fullurl;
         if(page.images !== undefined && page.images.length > 0) {
             //details.images = [];
