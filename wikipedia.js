@@ -47,7 +47,7 @@ Wikipedia.prototype.details = function(pageId) {
             details['images'] = images.join();
         }
         log("Extra info");
-    	log(resultArray);
+    	log(details);
 	return details;
     }
     return {};
