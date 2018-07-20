@@ -37,15 +37,15 @@ Wikipedia.prototype.details = function(pageId) {
         details['url'] = page.fullurl;
         if(page.images !== undefined && page.images.length > 0) {
             //details.images = [];
-            var imgTitles = "";
+            var imgTitles = [];
             var regex = new RegExp("\.[Jj][Pp][Ee]?[Gg]$");
             for(var index in page.images) {
                 var title = page.images[index].title;
-				if(regex.test(title))
-					imgTitles = imgTitles + title + "|"
+		if(regex.test(title))
+			imgTitles.push(title);
             }
-            imgTitles = imgTitles.replace(/\|([^\|]*)$/, '');
-            details['images'] = this.getImages(imgTitle);
+	    var images = this.getImages(imgTitles.join('|'));
+            details['images'] = images.join();
         }
         resultArray.push(details);
     }
