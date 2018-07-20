@@ -49,6 +49,8 @@ Wikipedia.prototype.details = function(pageId) {
         }
         resultArray.push(details);
     }
+    log("Extra info");
+    log(resultArray);
     return resultArray;
 }
 
