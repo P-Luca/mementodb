@@ -31,10 +31,10 @@ Wikipedia.prototype.details = function(pageId) {
     if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
         var page = response.query.pages[pageId];
         var details = {};
-        details.title = page.title
-        details.location = page.coordinates[0].lat + "," + page.coordinates[0].lon;
-        details.extract = page.extract;
-        details.url = page.fullurl;
+        details['title'] = page.title
+        details['location'] = page.coordinates[0].lat + "," + page.coordinates[0].lon;
+        details['extract'] = page.extract;
+        details['url'] = page.fullurl;
         if(page.images !== undefined && page.images.length > 0) {
             //details.images = [];
             var imgTitles = "";
@@ -45,26 +45,26 @@ Wikipedia.prototype.details = function(pageId) {
 					imgTitles = imgTitles + title + "|"
             }
             imgTitles = imgTitles.replace(/\|([^\|]*)$/, '');
-            details.images = getImages(imgTitle);
+            details['images'] = this.getImages(imgTitle);
         }
         resultArray.push(details);
     }
     return resultArray;
 }
 
-function getImages(titles) {
+Wikipedia.prototype.getImages = function(titles) {
     var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&iiurlwidth=1280&iiurlheight=1280&titles="+encodeURIComponent(imgTitles));
     var json = JSON.parse(result.body);
-    if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
-        var images = "";
+    var images = [];
+    if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {        
         for(var index in json.query.pages) {
             var img = json.query.pages[index];
             if(img !== undefined && img.invalid === undefined) {
-                images = images + img.imageinfo[0].thumburl + ",";
+                //images = images + img.imageinfo[0].thumburl + ",";
+		images.push(img.imageinfo[0].thumburl);
             }
         }
-        images = images.replace(/,([^,]*)$/, '');
-        return images;
+        //images = images.replace(/,([^,]*)$/, '');
     }
-    return null;
+    return images;
 }
