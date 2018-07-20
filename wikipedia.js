@@ -27,7 +27,6 @@ Wikipedia.prototype.search = function(query) {
 Wikipedia.prototype.details = function(pageId) {
     var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&exintro=1&explaintext=1&exsectionformat=plain&pageids=" + pageId);
     var json = JSON.parse(result.body);
-    var resultArray = [];
     if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
         var page = json.query.pages[pageId];
         var details = {};
@@ -47,11 +46,11 @@ Wikipedia.prototype.details = function(pageId) {
 	    var images = this.getImages(imgTitles.join('|'));
             details['images'] = images.join();
         }
-        resultArray.push(details);
+        log("Extra info");
+    	log(resultArray);
+	return details;
     }
-    log("Extra info");
-    log(resultArray);
-    return resultArray;
+    return {};
 }
 
 Wikipedia.prototype.getImages = function(titles) {
