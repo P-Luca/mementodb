@@ -29,7 +29,7 @@ Wikipedia.prototype.details = function(pageId) {
     var json = JSON.parse(result.body);
     var resultArray = [];
     if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
-        var page = response.query.pages[pageId];
+        var page = json.query.pages[pageId];
         var details = {};
         details['title'] = page.title
         details['location'] = page.coordinates[0].lat + "," + page.coordinates[0].lon;
@@ -44,8 +44,8 @@ Wikipedia.prototype.details = function(pageId) {
 		if(regex.test(title))
 			imgTitles.push(title);
             }
-	    /*var images = this.getImages(imgTitles.join('|'));
-            details['images'] = images.join();*/
+	    var images = this.getImages(imgTitles.join('|'));
+            details['images'] = images.join();
         }
         resultArray.push(details);
     }
