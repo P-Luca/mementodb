@@ -1,9 +1,24 @@
-function Wikipedia (lang) {
-    this.lang = lang;
+function Wikipedia(query) {
+	var regex = new RegExp("^([w][vp]) (it|en) ");
+	var match = regex.exec(query);
+	this.lang = "it";
+	this.baseUrl = "wikipedia.org";
+	this.cleanQuery = query;
+	if (match !== null) {
+		this.lang = match[2];
+		if(match[1] === "wv") {
+			this.baseUrl = "wikivoyage.org";
+		}
+		this.cleanQuery = query.replace(match[0], "");
+	}
 }
 
+Wikipedia.prototype.getUrl = function() {
+  return "https://" + this.lang + "." + this.baseUrl;
+}
+	
 Wikipedia.prototype.search = function(query) {
-    var result = http().get("https://"+this.lang+".wikipedia.org/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimageinfo&generator=search&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
+    var result = http().get(this.baseUrl + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimageinfo&generator=search&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
     var json = JSON.parse(result.body);
     var resultArray = [];
     if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
