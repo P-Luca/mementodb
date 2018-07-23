@@ -55,6 +55,6 @@ function testPoints() {
 	var point = {};
 	point.coordinates = "";
 	point.name = "Kinkakuji";
-	points.add(point);
+	points.push(point);
 	mapsme.showPoints(points);
 }
