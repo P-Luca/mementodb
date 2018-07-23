@@ -20,6 +20,22 @@ var EXTRA_MWM_RESPONSE_POINT_LON = AUTHORITY + ".point_lon";
 var EXTRA_MWM_RESPONSE_POINT_ID = AUTHORITY + ".point_id";
 var EXTRA_MWM_RESPONSE_ZOOM = AUTHORITY + ".zoom_level";
 
+// Placemark Styles
+var PlacemarkRed = "placemark-red";
+var PlacemarkBlue = "placemark-blue";
+var PlacemarkPurple = "placemark-purple";
+var PlacemarkYellow = "placemark-yellow";
+var PlacemarkPink = "placemark-pink";
+var PlacemarkBrown = "placemark-brown";
+var PlacemarkGreen = "placemark-green";
+var PlacemarkOrange = "placemark-orange";
+
+function Point(coordinates, name, style) {
+	this.coordinates = coordinates;
+	this.name = name;
+	this.style = (style === null || style === undefined) ?  PlacemarkRed : style;
+}
+
 function MapsMe() {
 	
 }
@@ -32,6 +48,7 @@ MapsMe.prototype.createUrl = function(points) {
 	for(var i in points) {
 		url += "&ll="+points[i].coordinates+"&";
 		url += "&n="+points[i].name+"&";
+		url += "&s="+points[i].style+"&";
 	}
 	return url;
 }
@@ -52,9 +69,7 @@ MapsMe.prototype.showPoints = function(points) {
 function testPoints() {
 	var mapsme = new MapsMe();
 	var points = [];
-	var point = {};
-	point.coordinates = "";
-	point.name = "Kinkakuji";
+	var point = new Point("35.0393744,135.7270544", "Kinkakuji");
 	points.push(point);
 	mapsme.showPoints(points);
 }
