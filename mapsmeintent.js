@@ -42,7 +42,7 @@ function MapsMe() {
 
 MapsMe.prototype.createUrl = function(points) {
 	var url = "mapswithme://map?v="+API_VERSION;
-	url += "&backurl=mapswithme.client.mementodb";
+	url += "&backurl=mapswithme.client.com.luckydroid.droidbase";
 	url += "&appname=mementoDB";
 	
 	for(var i in points) {
@@ -59,8 +59,8 @@ MapsMe.prototype.showPoints = function(points) {
 	i.extra(EXTRA_URL , this.createUrl(points));
 	i.extra(EXTRA_TITLE, "Test Title");
 	i.extra(EXTRA_RETURN_ON_BALLOON_CLICK, false);
-	i.extra(EXTRA_PICK_POINT, false);
-	i.extra(EXTRA_CUSTOM_BUTTON_NAME, "CustomButton");
+	i.extra(EXTRA_PICK_POINT, true);
+	i.extra(EXTRA_CUSTOM_BUTTON_NAME, "");
 	i.extra(EXTRA_HAS_PENDING_INTENT, false);
 
 	i.send();
