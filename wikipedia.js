@@ -51,11 +51,19 @@ Wikipedia.prototype.details = function(pageId) {
         details['extract'] = page.extract;
         details['url'] = page.fullurl;
         if(page.images !== undefined && page.images.length > 0) {
-            //details.images = [];
-            var imgTitles = [];
+			var imgTitles = [];
             var regex = new RegExp("\.[Jj][Pp][Ee]?[Gg]$");
             for(var index in page.images) {
                 var title = page.images[index].title;
+				
+            var imcontinue = page.continue.imcontinue;
+			do {
+				var resultContinue = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&pageids=" + pageId+"&imcontinue=" + encodeURIComponent(imcontinue));
+				var jsonContinue = JSON.parse(resultContinue.body);
+				if(jsonContinue !== undefined && jsonContinue.query !== undefined && jsonContinue.query.pages !== undefined) {
+				}
+			}
+			while (imcontinue != null || imcontinue != undefined);
 		if(regex.test(title))
 			imgTitles.push(title);
             }
