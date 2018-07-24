@@ -51,23 +51,27 @@ Wikipedia.prototype.details = function(pageId) {
         details['extract'] = page.extract;
         details['url'] = page.fullurl;
         if(page.images !== undefined && page.images.length > 0) {
+			var imcontinue = json.continue !== undefined ? json.continue.imcontinue : undefined;
+			do {
+				var resultContinue = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&imlimit=50&exsectionformat=plain&pageids=" + pageId+"&imcontinue=" + encodeURIComponent(imcontinue));
+				var jsonContinue = JSON.parse(resultContinue.body);
+				if(jsonContinue !== undefined && jsonContinue.query !== undefined && jsonContinue.query.pages !== undefined) {
+					page.images = page.images.concat(jsonContinue.query.pages[pageId].images);
+					imcontinue = jsonContinue.continue !== undefined ? jsonContinue.continue.imcontinue : undefined;
+				}
+				else 
+					imcontinue = undefined;
+			}
+			while (imcontinue != null || imcontinue != undefined);
+			
 			var imgTitles = [];
             var regex = new RegExp("\.[Jj][Pp][Ee]?[Gg]$");
             for(var index in page.images) {
                 var title = page.images[index].title;
-				
-            var imcontinue = page.continue.imcontinue;
-			do {
-				var resultContinue = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&pageids=" + pageId+"&imcontinue=" + encodeURIComponent(imcontinue));
-				var jsonContinue = JSON.parse(resultContinue.body);
-				if(jsonContinue !== undefined && jsonContinue.query !== undefined && jsonContinue.query.pages !== undefined) {
-				}
-			}
-			while (imcontinue != null || imcontinue != undefined);
-		if(regex.test(title))
-			imgTitles.push(title);
+				if(regex.test(title))
+					imgTitles.push(title);
             }
-	    var images = this.getImages(imgTitles.join('|'));
+			var images = this.getImages(imgTitles.join('|'));
             details['images'] = images.join();
         }
         log("Extra info");
