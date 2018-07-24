@@ -21,7 +21,7 @@ Google.prototype.search = function(query) {
 			candidate.placeid = candidates[id].place_id;
 			candidate.title = candidates[id].name;
 			candidate.description = candidates[id].formatted_address;
-			candidate.location = candidates[id].geometry.location.lat+","+candidates[id].geometry.location.lon;
+			candidate.location = candidates[id].geometry.location.lat+","+candidates[id].geometry.location.lng;
 			if(candidates[id].photos !== undefined) {
 				candidate.photo = this.getUrl("/photo")+"&maxwidth=1280&photoreference=" + encodeURIComponent(candidates[id].photos[0].photo_reference);
 			}
