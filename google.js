@@ -8,7 +8,7 @@ Google.prototype.getUrl = function(relativeUrl) {
   return BASE_URL + relativeUrl + "?key=" + this.key;
 }
 
-Google.prototype.search(query) {
+Google.prototype.search = function(query) {
 	var result = http().get(this.getUrl("/findplacefromtext/json")+"&inputtype=textquery&fields=place_id,photos,icon,name,rating,geometry/location,formatted_address&language=it&input=" + encodeURIComponent(query));
 	var json = JSON.parse(result.body);
     var resultArray = [];
