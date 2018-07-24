@@ -10,9 +10,11 @@ Google.prototype.getUrl = function(relativeUrl) {
 
 Google.prototype.search = function(query) {
 	var result = http().get(this.getUrl("/findplacefromtext/json")+"&inputtype=textquery&fields=place_id,photos,icon,name,rating,geometry/location,formatted_address&language=it&input=" + encodeURIComponent(query));
+	log(result.body);
 	var json = JSON.parse(result.body);
+	log(json);
     var resultArray = [];
-	if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
+	if(json !== undefined && json.candidates !== undefined) {
         var candidates = json.candidates;
         for (var id in candidates) {
 			var candidate = {};
