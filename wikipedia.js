@@ -74,8 +74,6 @@ Wikipedia.prototype.details = function(pageId) {
 			var images = this.getImages(imgTitles.join('|'));
             details['images'] = images.join();
         }
-        log("Extra info");
-    	log(details);
 	return details;
     }
     return {};
@@ -89,11 +87,9 @@ Wikipedia.prototype.getImages = function(titles) {
         for(var index in json.query.pages) {
             var img = json.query.pages[index];
             if(img !== undefined && img.invalid === undefined) {
-                //images = images + img.imageinfo[0].thumburl + ",";
-		images.push(img.imageinfo[0].thumburl);
+                images.push(img.imageinfo[0].thumburl);
             }
         }
-        //images = images.replace(/,([^,]*)$/, '');
     }
     return images;
 }

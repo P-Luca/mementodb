@@ -1,0 +1,26 @@
+<!--
+  Test code for TheGamesDb data source
+
+  This was designed to run in Firefox using the CORS Everywhere extension.
+  https://addons.mozilla.org/en-US/firefox/addon/cors-everywhere/
+  https://github.com/spenibus/cors-everywhere-firefox-addon
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Memento database test</title>
+    <script type="text/javascript" src="test.js"></script>
+    <script type="text/javascript" src="wikipedia.js"></script>
+    <script type="text/javascript">
+      console.log("Beginning query.");
+	  var wiki = new Wikipedia("wv it Piazza Maggiore");
+      var results = wiki.search(wiki.cleanQuery);	  
+      console.log(results);
+	  var details = wiki.details(results[1].pageid);
+      console.log(details);
+      console.log("Query complete.");
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

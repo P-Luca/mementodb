@@ -17,3 +17,7 @@ httpClient.prototype.get = function(query) {
   }
   return HttpResult;
 }
+
+function log(text) {
+	console.log(text);
+}
