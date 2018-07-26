@@ -37,17 +37,17 @@ Google.prototype.details = function(placeid) {
 	log(json);
     var obj = {};
 	if(json !== undefined && json.result !== undefined) {
-		obj.title = json.result.name;
-		obj.location = json.result.geometry.location.lat+","+json.result.geometry.location.lng;
-		obj.rating = json.result.rating;
-		obj.url = json.result.url;
+		obj["title"] = json.result.name;
+		obj["location"] = json.result.geometry.location.lat+","+json.result.geometry.location.lng;
+		obj["rating"] = json.result.rating;
+		obj["url"] = json.result.url;
 		if(json.result.photos !== undefined) {
 			var photos = [];
 			for(var i in json.result.photos) {
 				var photo = json.result.photos[i];
 				photos.push(this.getUrl("/photo")+"&maxwidth=1280&photoreference=" + encodeURIComponent(photo.photo_reference));
 			}
-			obj.photos = photos.join();
+			obj["photos"] = photos.join();
 		}
     }
     return obj;
