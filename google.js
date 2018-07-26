@@ -9,7 +9,7 @@ Google.prototype.getUrl = function(relativeUrl) {
 }
 
 Google.prototype.search = function(query) {
-	var result = http().get(this.getUrl("/findplacefromtext/json")+"&inputtype=textquery&fields=place_id,photos,icon,name,rating,geometry/location,formatted_address&language=it&input=" + encodeURIComponent(query));
+	var result = http().get(this.getUrl("/findplacefromtext/json")+"&inputtype=textquery&fields=place_id,photos,icon,name,formatted_address&language=it&input=" + encodeURIComponent(query));
 	log(result.body);
 	var json = JSON.parse(result.body);
 	log(json);
@@ -21,7 +21,6 @@ Google.prototype.search = function(query) {
 			candidate.placeid = candidates[id].place_id;
 			candidate.title = candidates[id].name;
 			candidate.description = candidates[id].formatted_address;
-			candidate.location = candidates[id].geometry.location.lat+","+candidates[id].geometry.location.lng;
 			if(candidates[id].photos !== undefined) {
 				candidate.photo = this.getUrl("/photo")+"&maxwidth=1280&photoreference=" + encodeURIComponent(candidates[id].photos[0].photo_reference);
 			}
@@ -29,4 +28,27 @@ Google.prototype.search = function(query) {
         }
     }
     return resultArray;
+}
+
+Google.prototype.details = function(placeid) {
+	var result = http().get(this.getUrl("/details/json")+"&fields=name,rating,formatted_address,geometry/location,url,photos&placeid=" + encodeURIComponent(placeid));
+	log(result.body);
+	var json = JSON.parse(result.body);
+	log(json);
+    var obj = {};
+	if(json !== undefined && json.result !== undefined) {
+		obj.title = json.result.name;
+		obj.location = json.result.geometry.location.lat+","+json.result.geometry.location.lng;
+		obj.rating = json.result.rating;
+		obj.url = json.result.url;
+		if(json.result.photos !== undefined) {
+			var photos = [];
+			for(var i in json.result.photos) {
+				var photo = json.result.photos[i];
+				photos.push(this.getUrl("/photo")+"&maxwidth=1280&photoreference=" + encodeURIComponent(photo.photo_reference));
+			}
+			obj.photos = photos.join();
+		}
+    }
+    return obj;
 }
