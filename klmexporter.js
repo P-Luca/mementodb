@@ -40,7 +40,7 @@ KmlExporter.prototype._convertTrip = function (trip) {
 };
 
 KmlExporter.prototype._convertTappa = function (tappa) {
-  var places = entry().field("Luoghi");
+  var places = tappa.field("Luoghi");
   var objects = [];
   for (var i in places){
     var place = places[i];
