@@ -52,22 +52,3 @@ KmlExporter.prototype._convertTappa = function (tappa) {
   }
   return objects;
 };
-
-var luoghi = entry().field("Luoghi");
-var t=[]
-for(var i in luoghi){
-  var luogo = luoghi[i];
-  xml += "<Placemark>\n";
-  var coords = luogo.field("Posizione");
-  coords = coords.lng+","+coords.lat;
-  var name = luogo.field("Tipo")=="Attrazione" ? luogo.field("Attrazione") : luogo.field("Ristorante/Hotel");
-  xml += "<name>"+name+"</name>\n";
-  xml += "<description>"+luogo.field("Descrizione")+"</description>\n";
-  xml += "<Point>\n<coordinates>"+coords+",0</coordinates>\n</Point>";
-xml += "</Placemark>\n";
-}
-xml += "</Document>\n</kml>";
-var f = file(filename);
-f.write(xml);
-f.close();
-//message(xml)
