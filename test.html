@@ -13,19 +13,21 @@
     <script type="text/javascript" src="wikipedia.js"></script>
     <script type="text/javascript" src="google.js"></script>
     <script type="text/javascript">
-//      console.log("Beginning query.");
-//	  var wiki = new Wikipedia("wv it Piazza Maggiore");
-//      var results = wiki.search(wiki.cleanQuery);	  
-//      console.log(results);
-//	  var details = wiki.details(results[1].pageid);
-//      console.log(details);
-//      console.log("Query complete.");
+      console.log("Beginning query.");
+      var wiki = new Wikipedia("Tokyo Tower");
+      var results = wiki.search(wiki.cleanQuery);
+      console.log(results);
+      var details = wiki.details(results[2].pageid);
+      console.log(details);
+      //console.log("Query complete.");
+/*
 	var google = new Google("AIzaSyD8xtPvTKeqVQo8gaN8vy4C-3-zOc644I4");
 	var results = google.search("Gyokusen tei");
 	console.log(results);
-	
+
 	var details = google.details(results[0].placeid);
 	log(details);
+  */
     </script>
   </head>
   <body>

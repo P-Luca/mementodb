@@ -18,7 +18,8 @@ Wikipedia.prototype.getUrl = function() {
 }
 
 Wikipedia.prototype.search = function(query) {
-	var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimageinfo&generator=search&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
+//https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&gsrnamespace=0&gsrsort=relevance&gsrsearch=Tokyo%20Tower
+	var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
   var json = JSON.parse(result.body);
   var resultArray = [];
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
@@ -28,10 +29,11 @@ Wikipedia.prototype.search = function(query) {
         var page = {};
         page.pageid = pages[id].pageid;
         page.title = pages[id].title;
-        page.description = pages[id].description;
+        page.description = pages[id].description !== undefined ? pages[id].description : "";
         page.lat = pages[id].coordinates[0].lat;
         page.lon = pages[id].coordinates[0].lon;
         page.location = page.lat + "," + page.lon;
+				page.thumb = pages[id].thumbnail.source;
         resultArray.push(page);
       }
     }
@@ -40,8 +42,8 @@ Wikipedia.prototype.search = function(query) {
 }
 
 Wikipedia.prototype.details = function(pageId) {
-  // https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&pageids=1437252&utf8=1&inprop=url%7Cdisplaytitle&explaintext=1&exsectionformat=plain
-  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&pageids=" + pageId);
+  // https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&pageids=1437252&utf8=1&inprop=url%7Cdisplaytitle&explaintext=1&exsectionformat=plain&piprop=original
+  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&piprop=original&pageids=" + pageId);
   var json = JSON.parse(result.body);
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
     var page = json.query.pages[pageId];
@@ -71,6 +73,7 @@ Wikipedia.prototype.details = function(pageId) {
 						imgTitles.push(title);
       }
 			var images = this.getImages(imgTitles.join('|'));
+			images.unshift(page.original.source);
       details['images'] = images.join();
     }
 		return details;
@@ -85,6 +88,7 @@ Wikipedia.prototype.getImages = function(titles) {
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
     for(var index in json.query.pages) {
       var img = json.query.pages[index];
+			log(img);
       if(img !== undefined && img.invalid === undefined) {
           images.push(img.imageinfo[0].thumburl);
       }
