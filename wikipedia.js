@@ -18,8 +18,8 @@ Wikipedia.prototype.getUrl = function() {
 }
 
 Wikipedia.prototype.search = function(query) {
-//https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&gsrnamespace=0&gsrsort=relevance&gsrsearch=Tokyo%20Tower
-	var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
+//https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&pilimit=50&pilicense=any&gsrnamespace=0&gsrsort=relevance&gsrsearch=Tokyo%20Tower
+	var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&pilimit=50&pilicense=any&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
   var json = JSON.parse(result.body);
   var resultArray = [];
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
@@ -42,8 +42,8 @@ Wikipedia.prototype.search = function(query) {
 }
 
 Wikipedia.prototype.details = function(pageId) {
-  // https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&pageids=1437252&utf8=1&inprop=url%7Cdisplaytitle&explaintext=1&exsectionformat=plain&piprop=original
-  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&piprop=original&pageids=" + pageId);
+  // https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&pageids=1437252&utf8=1&inprop=url%7Cdisplaytitle&explaintext=1&exsectionformat=plain&piprop=original&pilimit=50&pilicense=any
+  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&piprop=original&pilimit=50&pilicense=any&pageids=" + pageId);
   var json = JSON.parse(result.body);
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
     var page = json.query.pages[pageId];
