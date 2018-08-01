@@ -18,8 +18,8 @@ Wikipedia.prototype.getUrl = function() {
 }
 
 Wikipedia.prototype.search = function(query) {
-//https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&gsrnamespace=0&gsrsort=relevance&gsrsearch=Tokyo%20Tower
-	var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
+//https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&gsrnamespace=0&gsrsort=relevance&gsrsearch=Tokyo%20Tower
+	var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cpageimages&generator=search&piprop=thumbnail&pithumbsize=150&gsrnamespace=0&gsrsort=relevance&gsrsearch=" + encodeURIComponent(query));
   var json = JSON.parse(result.body);
   var resultArray = [];
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
@@ -42,8 +42,8 @@ Wikipedia.prototype.search = function(query) {
 }
 
 Wikipedia.prototype.details = function(pageId) {
-  // https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&pageids=1437252&utf8=1&inprop=url%7Cdisplaytitle&explaintext=1&exsectionformat=plain&piprop=original
-  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&piprop=original&pageids=" + pageId);
+  // https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&pageids=1437252&utf8=1&inprop=url%7Cdisplaytitle&explaintext=1&exsectionformat=plain&piprop=original
+  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&piprop=original&pageids=" + pageId);
   var json = JSON.parse(result.body);
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
     var page = json.query.pages[pageId];
@@ -55,7 +55,7 @@ Wikipedia.prototype.details = function(pageId) {
     if(page.images !== undefined && page.images.length > 0) {
 			var imcontinue = json.continue !== undefined ? json.continue.imcontinue : undefined;
 			do {
-				var resultContinue = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&imlimit=50&exsectionformat=plain&pageids=" + pageId+"&imcontinue=" + encodeURIComponent(imcontinue));
+				var resultContinue = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&imlimit=50&exsectionformat=plain&pageids=" + pageId+"&imcontinue=" + encodeURIComponent(imcontinue));
 				var jsonContinue = JSON.parse(resultContinue.body);
 				if(jsonContinue !== undefined && jsonContinue.query !== undefined && jsonContinue.query.pages !== undefined) {
 					page.images = page.images.concat(jsonContinue.query.pages[pageId].images);
@@ -82,7 +82,7 @@ Wikipedia.prototype.details = function(pageId) {
 }
 
 Wikipedia.prototype.getImages = function(titles) {
-  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&iiurlwidth=1280&iiurlheight=1280&titles="+encodeURIComponent(titles));
+  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=imageinfo&iiprop=url&iiurlwidth=1280&iiurlheight=1280&titles="+encodeURIComponent(titles));
   var json = JSON.parse(result.body);
   var images = [];
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
