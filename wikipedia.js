@@ -33,7 +33,8 @@ Wikipedia.prototype.search = function(query) {
         page.lat = pages[id].coordinates[0].lat;
         page.lon = pages[id].coordinates[0].lon;
         page.location = page.lat + "," + page.lon;
-				page.thumb = pages[id].thumbnail.source;
+				if(pages[id].thumbnail !== undefined)
+					page.thumb = pages[id].thumbnail.source;
         resultArray.push(page);
       }
     }
