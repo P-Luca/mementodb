@@ -47,7 +47,7 @@ Wikipedia.prototype.details = function(pageId) {
   var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&piprop=original&pilimit=50&pilicense=any&pageids=" + pageId);
   var json = JSON.parse(result.body);
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
-    var page = json.query.pages[pageId];
+    var page = json.query.pages[0];
     var details = {};
     details['title'] = page.title
     details['location'] = page.coordinates[0].lat + "," + page.coordinates[0].lon;
