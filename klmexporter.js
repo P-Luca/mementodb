@@ -15,7 +15,7 @@ KmlExporter.prototype.export = function (trip, savePath) {
     var place = places[i];
     xml +=  "     <Placemark>\n" +
             "       <name>" + place.name + "</name>\n" +
-            "       <description>" + place.description + "</description>\n" +
+            "       <description><![CDATA[" + place.description + "]]></description>\n" +
             "       <Point>\n" +
             "         <coordinates>" + place.coords + ",0</coordinates>\n" +
             "       </Point>\n" +
