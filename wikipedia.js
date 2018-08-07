@@ -59,7 +59,7 @@ Wikipedia.prototype.details = function(pageId) {
 				var resultContinue = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&imlimit=50&exsectionformat=plain&pageids=" + pageId+"&imcontinue=" + encodeURIComponent(imcontinue));
 				var jsonContinue = JSON.parse(resultContinue.body);
 				if(jsonContinue !== undefined && jsonContinue.query !== undefined && jsonContinue.query.pages !== undefined) {
-					page.images = page.images.concat(jsonContinue.query.pages[pageId].images);
+					page.images = page.images.concat(jsonContinue.query.pages[0].images);
 					imcontinue = jsonContinue.continue !== undefined ? jsonContinue.continue.imcontinue : undefined;
 				}
 				else
