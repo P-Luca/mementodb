@@ -77,6 +77,7 @@ Wikipedia.prototype.details = function(pageId) {
 			images.unshift(page.original.source);
       details['images'] = images.join();
     }
+    details['locationinfo'] = this.getLocationInformation(page.coordinates[0].lat, page.coordinates[0].lon);
 		return details;
   }
   return {};
@@ -96,4 +97,45 @@ Wikipedia.prototype.getImages = function(titles) {
     }
   }
   return images;
+}
+
+/*
+{
+  "place_id": 198726104,
+  "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+  "osm_type": "relation",
+  "osm_id": 4247312,
+  "lat": "35.65858645",
+  "lon": "139.745440057962",
+  "place_rank": 30,
+  "category": "tourism",
+  "type": "attraction",
+  "importance": "0.468912755639849",
+  "addresstype": "tourism",
+  "name": "Torre di Tokyo",
+  "display_name": "Torre di Tokyo, Tokyo Tower Street, 6-chome, Minato, Tokyo, Kanto, 105-0011, Giappone",
+  "address": {
+    "attraction": "Torre di Tokyo",
+    "road": "Tokyo Tower Street",
+    "hamlet": "6-chome",
+    "city": "Minato",
+    "state": "Tokyo",
+    "region": "Kanto",
+    "postcode": "105-0011",
+    "country": "Giappone",
+    "country_code": "jp"
+  },
+  "boundingbox": [
+    "35.6580427",
+    "35.6591227",
+    "139.744746",
+    "139.7461594"
+  ]
+}
+*/
+Wikipedia.prototype.getLocationInformation = function(lat, lon) {
+  var lang = this.lang !== "en" ? this.lang + "," : "";
+  var url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+lat+"&lon="+lon+"&accept-language="+lang+"en&addressdetails=1";
+  var result = http().get(url);
+  return JSON.parse(result.body);
 }
