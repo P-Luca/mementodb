@@ -43,13 +43,19 @@ Wikipedia.prototype.search = function(query) {
 }
 
 Wikipedia.prototype.details = function(pageId) {
-  // https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&pageids=1437252&utf8=1&inprop=url%7Cdisplaytitle&explaintext=1&exsectionformat=plain&piprop=original&pilimit=50&pilicense=any
-  var result = http().get(this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&piprop=original&pilimit=50&pilicense=any&pageids=" + pageId);
+  // https://it.wikipedia.org/wiki/Speciale:ApiSandbox#action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&pageids=1437252&utf8=1&inprop=url%7Cdisplaytitle&explaintext=1&exsectionformat=plain&coprop=type&piprop=original&pilimit=50&pilicense=any
+  var url = this.getUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts%7Cpageimages&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&exsectionformat=plain&coprop=type&piprop=original&pilimit=50&pilicense=any&pageids=" + pageId;
+  log("details url: " + url.replace("/w/api.php?", "/wiki/Speciale:ApiSandbox#"));
+  var result = http().get(url);
   var json = JSON.parse(result.body);
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
     var page = json.query.pages[0];
+    // log(page);
     var details = {};
     details['title'] = page.title
+    details['lat'] = page.coordinates[0].lat;
+    details['lon'] = page.coordinates[0].lon;
+    details['locationType'] = page.coordinates[0].type;
     details['location'] = page.coordinates[0].lat + "," + page.coordinates[0].lon;
     details['extract'] = page.extract;
     details['url'] = page.fullurl;
@@ -77,7 +83,7 @@ Wikipedia.prototype.details = function(pageId) {
 			images.unshift(page.original.source);
       details['images'] = images.join();
     }
-    details['locationinfo'] = this.getLocationInformation(page.coordinates[0].lat, page.coordinates[0].lon);
+    details['locationInfo'] = this.getLocationInformation(page.coordinates[0], page.title);
 		return details;
   }
   return {};
@@ -90,7 +96,7 @@ Wikipedia.prototype.getImages = function(titles) {
   if(json !== undefined && json.query !== undefined && json.query.pages !== undefined) {
     for(var index in json.query.pages) {
       var img = json.query.pages[index];
-			log(img);
+			//log(img);
       if(img !== undefined && img.invalid === undefined) {
           images.push(img.imageinfo[0].thumburl);
       }
@@ -132,10 +138,47 @@ Wikipedia.prototype.getImages = function(titles) {
     "139.7461594"
   ]
 }
+
+WIKIPEDIA COORDINATES TYPE VALUES:
+country         (e.g. "type:country")
+adm1st          Administrative unit of country, 1st level (province, state), e.g. U.S. states
+adm2nd          Administrative unit of country, 2nd level, e.g. US county
+adm3rd          Administrative unit of country, 3rd level
+city            cities, towns, villages, hamlets, suburbs, subdivisions, neighborhoods, and other human settlements (including unincorporated and/or abandoned ones)
+airport         airports and airbases
+mountain        peaks, mountain ranges, hills, submerged reefs, and seamounts
+isle            islands and isles
+waterbody       bays, fjords, lakes, reservoirs, ponds, lochs, loughs, meres, lagoons, estuaries, inland seas, and waterfalls
+forest          forests and woodlands
+river           rivers, canals, creeks, brooks, and streams, including intermittent ones
+glacier         glaciers and icecaps
+event           one-time or regular events and incidents that occurred at a specific location, including battles, earthquakes, festivals, and shipwrecks
+edu             schools, colleges, and universities
+pass            mountain passes
+railwaystation  stations, stops, and maintenance areas of railways and trains, including railroad, metro, rapid transit, underground, subway, elevated railway, etc.
+landmark        buildings (including churches, factories, museums, theatres, and power plants but excluding schools and railway stations), caves, cemeteries, cultural landmarks, geologic faults, headlands, intersections, mines, ranches, roads, structures (including antennas, bridges, castles, dams, lighthouses, monuments, and stadiums), tourist attractions, valleys, and other points of interest
 */
-Wikipedia.prototype.getLocationInformation = function(lat, lon) {
+Wikipedia.prototype.getLocationInformation = function(wikipediaCoords, name) {
+  var lat = wikipediaCoords.lat;
+  var lon = wikipediaCoords.lon;
   var lang = this.lang !== "en" ? this.lang + "," : "";
-  var url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+lat+"&lon="+lon+"&accept-language="+lang+"en&addressdetails=1";
-  var result = http().get(url);
-  return JSON.parse(result.body);
+  var url = "https://nominatim.openstreetmap.org/";
+  name = encodeURIComponent(name);
+  if(wikipediaCoords.type === "country") {
+    url += "search/"+name+"?country="+name;
+  }
+  else if(wikipediaCoords.type === "adm2nd" || wikipediaCoords.type === "adm3rd") {
+    url += "search/"+name+"?country="+name;
+  }
+  else {
+    url += "search/"+name+"?viewbox="+(lat-1)+","+(lon-1)+","+(lat+1)+","+(lon+1)+"&bounded=1";
+    // url += "reverse?lat="+lat+"&lon="+lon;
+  }
+  url += "&format=jsonv2&accept-language="+lang+"en&addressdetails=1&extratags=1"
+  log("OSM url: " + url);
+  var response = http().get(url);
+  var result = JSON.parse(response.body);
+  if(Array.isArray(result))
+    return result[0];
+  return result;
 }

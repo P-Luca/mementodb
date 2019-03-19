@@ -11,15 +11,27 @@
     <title>Memento database test</title>
     <script type="text/javascript" src="test.js"></script>
     <script type="text/javascript" src="wikipedia.js"></script>
-    <script type="text/javascript" src="google.js"></script>
+    <script type="text/javascript" src="osm.js"></script>
+    <!-- <script type="text/javascript" src="google.js"></script> -->
     <script type="text/javascript">
-      console.log("Beginning query.");
-      var wiki = new Wikipedia("Tokyo Tower");
-      var results = wiki.search(wiki.cleanQuery);
-//      console.log(results);
-      var details = wiki.details(results[2].pageid);
-      console.log(details);
-      //console.log("Query complete.");
+      function search(text) {
+        var box = document.getElementById("results");
+        box.innerHTML = "";
+        // var wiki = new Wikipedia(text);
+        // var results = wiki.search(wiki.cleanQuery);
+        var wiki = new Osm("it");
+        var results = wiki.search(text);
+        results.forEach(element => {
+          box.innerHTML = box.innerHTML + "<a href=\"#\" onclick=\"details('"+element.pageid+"')\"><img src=\""+element.thumb+"\" />" + element.title + " - " + element.description + "</a><br>"; 
+        });
+        console.log(results);
+      }
+
+      function details(id) {
+        var wiki = new Osm("it");
+        var details = wiki.details(id);
+        log(details);
+      }
 /*
 	var google = new Google("AIzaSyD8xtPvTKeqVQo8gaN8vy4C-3-zOc644I4");
 	var results = google.search("Gyokusen tei");
@@ -31,5 +43,9 @@
     </script>
   </head>
   <body>
+      <input type="text" id="text" />
+      <button onclick="search(document.getElementById('text').value)">Search</button>
+
+      <p id="results"></p>
   </body>
 </html>
