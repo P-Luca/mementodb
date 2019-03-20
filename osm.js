@@ -26,7 +26,7 @@ Osm.prototype.search = function (query) {
                     "id": item.extratags.wikidata,
                     "lat": item.lat,
                     "lon": item.lon,
-                    "address": element.address
+                    "address": item.address
                 };
             }
             else if (item.category === "amenity" || item.category === "tourism") {
