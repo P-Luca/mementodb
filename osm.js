@@ -28,27 +28,32 @@ Osm.prototype.search = function (query) {
                     "lon": item.lon
                 };
             }
-            else if (item.category === "amenity") {
+            else if (item.category === "amenity" || item.category === "tourism") {
                 amenities.push(item);
             }
         }
         if (Object.keys(ids).length > 0) {
             resultArray = this._getWikipediaResults(ids);
         }
-        else if (amenities.length > 0) {
+        if (amenities.length > 0) {
             amenities.forEach(element => {
                 var page = {};
+                page.title = element.address[element.type] !== undefined ? element.address[element.type] : element.display_name;
                 page.pageid = {
                     "type": "OSM",
                     "id": element.place_id,
                     "lat": element.lat,
-                    "lon": element.lon
-                };
-                page.title = element.address[element.type] !== undefined ? element.address[element.type] : element.display_name;
+                    "lon": element.lon,
+                    "extratags": element.extratags,
+                    "address": element.address,
+                    "name": page.title
+                };                
                 page.description = element.type;
                 page.lat = element.lat;
                 page.lon = element.lon;
                 page.location = page.lat + "," + page.lon;
+                page.thumb = element.icon;
+                resultArray.push(page);
             });
         }
     }
@@ -92,7 +97,7 @@ Osm.prototype._wikipediaSearch = function (wikidataIDs) {
         var pages = json.query.pages;
         for (var id in pages) {
             var wikidataId = this._getWikidataIdFromTitle(wikidataIDs, pages[id].title);
-            if (wikidataId != null) {
+            if (wikidataId != null && (pages[id].missing === undefined || !pages[id].missing)) {
                 var page = {};
                 wikidataId["wpPageId"] = pages[id].pageid;
                 page.pageid = wikidataId;
@@ -121,7 +126,17 @@ Osm.prototype._getWikidataIdFromTitle = function (wikidataIDs, title) {
 Osm.prototype.details = function (pageId) {
     if (pageId.type === "WP")
         return this._wikipediaDetails(pageId);
+    else if (pageId.type === "OSM") {
+        var details = {};
+        details['title'] = pageId.name
+        details['lat'] = pageId.lat;
+        details['lon'] = pageId.lon;
+        details['location'] = pageId.lat + "," + pageId.lon;
+        details['extract'] = "";
+        details['url'] = pageId.extratags.website !== undefined ? pageId.extratags.website : null;
 
+        return details;
+    }
 }
 
 Osm.prototype._wikipediaDetails = function (pageId) {
@@ -163,7 +178,8 @@ Osm.prototype._wikipediaDetails = function (pageId) {
                 }
             }
             var images = this.getImages(imgTitles.join('|'));
-            images.unshift(page.original.source);
+            if(page.original !== undefined)
+                images.unshift(page.original.source);
             details['images'] = images.join();
         }
         //   details['locationInfo'] = this.getLocationInformation(page.coordinates[0], page.title);
