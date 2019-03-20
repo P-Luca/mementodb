@@ -25,7 +25,8 @@ Osm.prototype.search = function (query) {
                     "type": "WP",
                     "id": item.extratags.wikidata,
                     "lat": item.lat,
-                    "lon": item.lon
+                    "lon": item.lon,
+                    "address": element.address
                 };
             }
             else if (item.category === "amenity" || item.category === "tourism") {
@@ -134,7 +135,7 @@ Osm.prototype.details = function (pageId) {
         details['location'] = pageId.lat + "," + pageId.lon;
         details['extract'] = "";
         details['url'] = pageId.extratags.website !== undefined ? pageId.extratags.website : null;
-
+        details['address'] = pageId.address;
         return details;
     }
 }
@@ -155,6 +156,7 @@ Osm.prototype._wikipediaDetails = function (pageId) {
         details['location'] = pageId.lat + "," + pageId.lon;
         details['extract'] = page.extract;
         details['url'] = page.fullurl;
+        details['address'] = pageId.address;
         if (page.images !== undefined && page.images.length > 0) {
             var imcontinue = json.continue !== undefined ? json.continue.imcontinue : undefined;
             do {
@@ -236,3 +238,24 @@ Tokyo Tower -> WikiData ID = Q183536
     https://www.wikidata.org/wiki/Special:ApiSandbox#action=wbgetentities&format=json&ids=Q183536&props=info%7Cdescriptions%7Clabels%7Cdatatype&languages=it
 
 */
+
+function createCountryAndState(address) {
+    var country = null;
+    var state = null;
+    if(address.country !== undefined) {
+        country = lib().findByKey(address.country);
+        if(country == null)
+            country = lib.create({
+                "Destinazione": address.country
+            });
+    }
+    if(address.state !== undefined) {
+        state = lib().findByKey(address.state);
+        if(state == null)
+            state = lib.create({
+                "Destinazione": address.state
+            });
+    }
+
+    return {"country": country, "state": state};
+}
