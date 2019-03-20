@@ -143,7 +143,7 @@ Osm.prototype._wikipediaDetails = function (pageId) {
         if (page.images !== undefined && page.images.length > 0) {
             var imcontinue = json.continue !== undefined ? json.continue.imcontinue : undefined;
             do {
-                var resultContinue = http().get(this.getWikipediaUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&imlimit=50&exsectionformat=plain&pageids=" + pageId + "&imcontinue=" + encodeURIComponent(imcontinue));
+                var resultContinue = http().get(this.getWikipediaUrl() + "/w/api.php?action=query&format=json&formatversion=2&prop=coordinates%7Cdescription%7Cimages%7Cinfo%7Cextracts&utf8=1&inprop=url%7Cdisplaytitle&exlimit=20&explaintext=1&imlimit=50&exsectionformat=plain&pageids=" + pageId.wpPageId + "&imcontinue=" + encodeURIComponent(imcontinue));
                 var jsonContinue = JSON.parse(resultContinue.body);
                 if (jsonContinue !== undefined && jsonContinue.query !== undefined && jsonContinue.query.pages !== undefined) {
                     page.images = page.images.concat(jsonContinue.query.pages[0].images);
