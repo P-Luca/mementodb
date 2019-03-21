@@ -1,6 +1,7 @@
 function Osm(lang) {
     this.lang = lang;
-    this.baseUrl = "https://nominatim.openstreetmap.org/";
+    this.baseUrl = "https://nominatim.openstreetmap.org";
+    this.wikidataUrl = "https://www.wikidata.org"
 }
 
 Osm.prototype.getWikipediaUrl = function () {
@@ -9,7 +10,7 @@ Osm.prototype.getWikipediaUrl = function () {
 
 Osm.prototype.search = function (query) {
     var lang = this.lang !== "en" ? this.lang + "," : "";
-    var url = this.baseUrl + "search/" + encodeURIComponent(query) + "?format=jsonv2&accept-language=" + lang + "en&addressdetails=1&extratags=1&limit=100";
+    var url = this.baseUrl + "/search/" + encodeURIComponent(query) + "?format=jsonv2&accept-language=" + lang + "en&addressdetails=1&extratags=1&limit=1000";
     log(url);
     var result = http().get(url);
     var json = JSON.parse(result.body);
@@ -22,11 +23,13 @@ Osm.prototype.search = function (query) {
             var item = json[id];
             if (item.extratags.wikidata !== undefined) {
                 ids[item.extratags.wikidata] = {
-                    "type": "WP",
+                    "idtype": "WP",
                     "id": item.extratags.wikidata,
                     "lat": item.lat,
                     "lon": item.lon,
-                    "address": item.address
+                    "address": item.address,
+                    "type": item.type,
+                    "category": item.category
                 };
             }
             else if (item.category === "amenity" || item.category === "tourism") {
@@ -41,13 +44,15 @@ Osm.prototype.search = function (query) {
                 var page = {};
                 page.title = element.address[element.type] !== undefined ? element.address[element.type] : element.display_name;
                 page.pageid = {
-                    "type": "OSM",
+                    "idtype": "OSM",
                     "id": element.place_id,
                     "lat": element.lat,
                     "lon": element.lon,
                     "extratags": element.extratags,
                     "address": element.address,
-                    "name": page.title
+                    "name": page.title,
+                    "type": element.type,
+                    "category": element.category
                 };                
                 page.description = element.type;
                 page.lat = element.lat;
@@ -69,7 +74,7 @@ Osm.prototype._getWikipediaResults = function (wikidataIDs) {
 
     //    https://www.wikidata.org/wiki/Special:ApiSandbox#action=wbgetentities&format=json&ids=Q183536&props=info%7Cdescriptions%7Clabels%7Cdatatype&languages=it
     var lang = this.lang !== "en" ? this.lang + "%7C" : "";
-    var url = "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=" + encodeURIComponent(ids.join('|')) + "&props=labels&languages=" + lang + "en";
+    var url = this.wikidataUrl + "/w/api.php?action=wbgetentities&format=json&ids=" + encodeURIComponent(ids.join('|')) + "&props=labels&languages=" + lang + "en";
     var result = http().get(url);
     var json = JSON.parse(result.body);
     var titles = [];
@@ -125,9 +130,9 @@ Osm.prototype._getWikidataIdFromTitle = function (wikidataIDs, title) {
 }
 
 Osm.prototype.details = function (pageId) {
-    if (pageId.type === "WP")
+    if (pageId.idtype === "WP")
         return this._wikipediaDetails(pageId);
-    else if (pageId.type === "OSM") {
+    else if (pageId.idtype === "OSM") {
         var details = {};
         details['title'] = pageId.name
         details['lat'] = pageId.lat;
@@ -136,6 +141,8 @@ Osm.prototype.details = function (pageId) {
         details['extract'] = "";
         details['url'] = pageId.extratags.website !== undefined ? pageId.extratags.website : null;
         details['address'] = pageId.address;
+        details['type'] = pageId.type;
+        details['category'] = pageId.category;
         return details;
     }
 }
@@ -157,6 +164,11 @@ Osm.prototype._wikipediaDetails = function (pageId) {
         details['extract'] = page.extract;
         details['url'] = page.fullurl;
         details['address'] = pageId.address;
+        details['type'] = pageId.type;
+        details['category'] = pageId.category;
+        if(page.coordinates !== undefined && page.coordinates[0] !== undefined) {
+            details['wpType'] = page.coordinates[0].type;
+        }
         if (page.images !== undefined && page.images.length > 0) {
             var imcontinue = json.continue !== undefined ? json.continue.imcontinue : undefined;
             do {
@@ -230,32 +242,28 @@ Osm.prototype.getLocationInformation = function (wikipediaCoords, name) {
     return result;
 }
 
-
-
-/*
-https://nominatim.openstreetmap.org/search/Tokyo%20Tower?format=jsonv2&accept-language=it,en&addressdetails=1&extratags=1
-Tokyo Tower -> WikiData ID = Q183536
-    https://www.wikidata.org/wiki/Special:ApiSandbox#action=wbgetentities&format=json&ids=Q183536&props=info%7Cdescriptions%7Clabels%7Cdatatype&languages=it
-
-*/
-
-function createCountryAndState(address) {
-    var country = null;
-    var state = null;
-    if(address.country !== undefined) {
-        country = lib().findByKey(address.country);
-        if(country == null)
-            country = lib.create({
-                "Destinazione": address.country
-            });
-    }
-    if(address.state !== undefined) {
-        state = lib().findByKey(address.state);
-        if(state == null)
-            state = lib.create({
-                "Destinazione": address.state
-            });
+Osm.prototype.getCountryOrState = function(country, state) {
+    var lang = this.lang !== "en" ? this.lang + "," : "";
+    var url = this.baseUrl + "/search/?format=jsonv2&accept-language=" + lang + "en&addressdetails=1&extratags=1&limit=1&country="+encodeURIComponent(country);
+    if(state !== undefined && state != null)
+        url += "&state="+encodeURIComponent(state);
+    var result = http().get(url);
+    var json = JSON.parse(result.body);
+    var ids = {};
+    var item = json[0];
+    if (item.extratags.wikidata !== undefined) {
+        ids[item.extratags.wikidata] = {
+            "idtype": "WP",
+            "id": item.extratags.wikidata,
+            "lat": item.lat,
+            "lon": item.lon,
+            "address": item.address,
+            "type": item.type,
+            "category": item.category
+        };
+        var wpResults = this._getWikipediaResults(ids);
+        var details = this.details(wpResults[0].pageid);
+        log(details);
     }
 
-    return {"country": country, "state": state};
 }
