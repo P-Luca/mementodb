@@ -196,7 +196,6 @@ Osm.prototype._wikipediaDetails = function (pageId) {
                 images.unshift(page.original.source);
             details['images'] = images.join();
         }
-        //   details['locationInfo'] = this.getLocationInformation(page.coordinates[0], page.title);
         return details;
     }
     return {};
@@ -251,7 +250,7 @@ Osm.prototype.getCountryOrState = function(country, state) {
     var json = JSON.parse(result.body);
     var ids = {};
     var item = json[0];
-    if (item.extratags.wikidata !== undefined) {
+    if (item.extratags !== undefined && item.extratags.wikidata !== undefined) {
         ids[item.extratags.wikidata] = {
             "idtype": "WP",
             "id": item.extratags.wikidata,
