@@ -262,8 +262,7 @@ Osm.prototype.getCountryOrState = function(country, state) {
             "category": item.category
         };
         var wpResults = this._getWikipediaResults(ids);
-        var details = this.details(wpResults[0].pageid);
-        log(details);
+        return this.details(wpResults[0].pageid);
     }
-
+    return null;
 }
