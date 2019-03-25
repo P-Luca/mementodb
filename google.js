@@ -9,7 +9,7 @@ Google.prototype.getUrl = function(relativeUrl) {
 }
 
 Google.prototype.search = function(query) {
-	var result = http().get(this.getUrl("/findplacefromtext/json")+"&inputtype=textquery&fields=place_id,photos,icon,name,formatted_address&language=it&input=" + encodeURIComponent(query));
+	var result = http().get(this.getUrl("/findplacefromtext/json")+"&inputtype=textquery&fields=place_id,photos,icon,type,name,formatted_address&language=it&input=" + encodeURIComponent(query));
 	log(result.body);
 	var json = JSON.parse(result.body);
 	log(json);
@@ -31,7 +31,7 @@ Google.prototype.search = function(query) {
 }
 
 Google.prototype.details = function(placeid) {
-	var result = http().get(this.getUrl("/details/json")+"&fields=name,rating,formatted_address,geometry/location,url,photos&placeid=" + encodeURIComponent(placeid));
+	var result = http().get(this.getUrl("/details/json")+"&fields=name,type,formatted_address,geometry/location,url,user_ratings_total,photos&placeid=" + encodeURIComponent(placeid));
 	log(result.body);
 	var json = JSON.parse(result.body);
 	log(json);
@@ -39,7 +39,6 @@ Google.prototype.details = function(placeid) {
 	if(json !== undefined && json.result !== undefined) {
 		obj["title"] = json.result.name;
 		obj["location"] = json.result.geometry.location.lat+","+json.result.geometry.location.lng;
-		obj["rating"] = json.result.rating;
 		obj["url"] = json.result.url;
 		if(json.result.photos !== undefined) {
 			var photos = [];
