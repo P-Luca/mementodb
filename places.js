@@ -123,12 +123,21 @@ Google.prototype.details = function (placeid) {
         }
         var address = result.address_components;
         for (var x in address) {
-            log(address[x].types);
-            if (address[x].types.includes("country")) {
-                details["country"] = address[x].long_name;
+            if(Array.isArray(address[x].types)) {
+                if (address[x].types.includes("country")) {
+                    details["country"] = address[x].long_name;
+                }
+                else if (address[x].types.includes("administrative_area_level_1")) {
+                    details["state"] = address[x].long_name;
+                }
             }
-            else if (address[x].types.includes("administrative_area_level_1")) {
-                details["state"] = address[x].long_name;
+            else {
+                if (address[x].types === "country") {
+                    details["country"] = address[x].long_name;
+                }
+                else if (address[x].types === "administrative_area_level_1") {
+                    details["state"] = address[x].long_name;
+                }
             }
         }
     }
