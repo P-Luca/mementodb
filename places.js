@@ -123,6 +123,7 @@ Google.prototype.details = function (placeid) {
         }
         var address = result.address_components;
         for (var x in address) {
+            log(address[x].types);
             if (address[x].types.includes("country")) {
                 details["country"] = address[x].long_name;
             }
