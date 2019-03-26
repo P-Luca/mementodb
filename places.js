@@ -123,11 +123,11 @@ Google.prototype.details = function (placeid) {
         }
         var address = result.address_components;
         for (var x in address) {
-            if(Array.isArray(address[x].types)) {
-                if (address[x].types.includes("country")) {
+            if (Array.isArray(address[x].types)) {
+                if (address[x].types[0] === "country") {
                     details["country"] = address[x].long_name;
                 }
-                else if (address[x].types.includes("administrative_area_level_1")) {
+                else if (address[x].types[0] === "administrative_area_level_1") {
                     details["state"] = address[x].long_name;
                 }
             }
@@ -387,7 +387,7 @@ Osm.prototype.getCountryOrState = function (country, state) {
     return null;
 }
 
-Osm.prototype.getImagesFromWebpage = function (url) {
+function getImagesFromWebpage(url) {
     // var result = http().get("https://daily.sevenfifty.com/regions/tuscany/");
     var result = http().get(url);
     // var reg = /src="\b(https?:\/\/\S+(?:png|jpe?g|gif)\S*)\b/igm;
