@@ -1,5 +1,5 @@
 function printLog(text) {
-    log(text);
+    // log(text);
 }
 
 function Places(lang, googleApiKey) {
@@ -110,7 +110,7 @@ Google.prototype.details = function (placeid) {
         details["location"] = result.geometry.location.lat + "," + result.geometry.location.lng;
         details['extract'] = "";
         details["url"] = result.url;
-        details["category"] = result.types !== undefined ? result.types[0] : "";
+        details["type"] = result.types !== undefined ? result.types[0] : "";
         if (result.photos !== undefined) {
             var photos = [];
             for (var i in result.photos) {
