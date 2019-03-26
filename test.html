@@ -6,46 +6,42 @@
   https://github.com/spenibus/cors-everywhere-firefox-addon
 -->
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Memento database test</title>
-    <script type="text/javascript" src="test.js"></script>
-    <script type="text/javascript" src="wikipedia.js"></script>
-    <script type="text/javascript" src="osm.js"></script>
-    <!-- <script type="text/javascript" src="google.js"></script> -->
-    <script type="text/javascript">
-      function search(text) {
-        var box = document.getElementById("results");
-        box.innerHTML = "";
-        // var wiki = new Wikipedia(text);
-        // var results = wiki.search(wiki.cleanQuery);
-        var wiki = new Osm("it");
-        var results = wiki.search(text);
-        results.forEach(element => {
-          box.innerHTML = box.innerHTML + "<a href=\"#\" onclick=\"details('"+element.pageid+"')\"><img src=\""+element.thumb+"\" />" + element.title + " - " + element.description + "</a><br>"; 
-        });
-        console.log(results);
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Memento database test</title>
+  <script type="text/javascript" src="test.js"></script>
+  <script type="text/javascript" src="places.js"></script>
+  <script type="text/javascript">
+    var places = new Places("it", "xxx-xxx-3333-3322211");
+
+    function search(text) {
+      var box = document.getElementById("results");
+      box.innerHTML = "";
+      results = places.search(text);
+      for (x in results) {
+        var element = results[x];
+        box.innerHTML = box.innerHTML + "<a href=\"#\" onclick=\"details(" + x + ")\"><img src=\"" + element.thumb + "\" />" + element.title + " - " +
+          element.description + "</a>" +
+          " (<a href=\"https://www.openstreetmap.org/#map=19/" + element.lat + "/" + element.lon + "\">Posizione</a>)" +
+          "<br>";
       }
+      console.log(results);
+    }
 
-      function details(id) {
-        var wiki = new Osm("it");
-        var details = wiki.details(id);
-        log(details);
-      }
-/*
-	var google = new Google("AIzaSyD8xtPvTKeqVQo8gaN8vy4C-3-zOc644I4");
-	var results = google.search("Gyokusen tei");
-	console.log(results);
+    function details(id) {
+      var details = places.details(results[id].pageid);
+      log(details);
+    }
 
-	var details = google.details(results[0].placeid);
-	log(details);
-  */
-    </script>
-  </head>
-  <body>
-      <input type="text" id="text" />
-      <button onclick="search(document.getElementById('text').value)">Search</button>
+  </script>
+</head>
 
-      <p id="results"></p>
-  </body>
+<body>
+  <input type="text" id="text" />
+  <button onclick="search(document.getElementById('text').value)">Search</button>
+  <hr/>
+  <p id="results"></p>
+</body>
+
 </html>
